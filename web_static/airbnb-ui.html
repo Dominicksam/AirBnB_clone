@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AirBnB Clone - Find Your Perfect Stay</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #fff;
+            color: #222;
+        }
+
+        /* Header */
+        header {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 1rem 2rem;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            color: #FF385C;
+            font-size: 2rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .search-bar {
+            display: flex;
+            align-items: center;
+            border: 1px solid #ddd;
+            border-radius: 40px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.12);
+            background: white;
+            overflow: hidden;
+        }
+
+        .search-item {
+            padding: 14px 24px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-right: 1px solid #eee;
+        }
+
+        .search-item:hover {
+            background: #f7f7f7;
+        }
+
+        .search-item:last-child {
+            border-right: none;
+        }
+
+        .search-btn {
+            background: #FF385C;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 50%;
+            margin: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .search-btn:hover {
+            background: #e31c5f;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-btn {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 40px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .user-btn:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%23FF385C" width="1200" height="600"/><rect fill="%23ffffff" opacity="0.1" x="0" y="0" width="400" height="200"/><rect fill="%23ffffff" opacity="0.1" x="800" y="400" width="400" height="200"/></svg>');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        /* Filters */
+        .filters {
+            padding: 2rem;
+            background: #f7f7f7;
+            border-bottom: 1px solid #eee;
+        }
+
+        .filter-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .filter-btn:hover {
+            background: #f7f7f7;
+        }
+
+        .filter-btn.active {
+            background: #222;
+            color: white;
+        }
+
+        /* Places Grid */
+        .places {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .places h1 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: #222;
+        }
+
+        .places-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .place-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .place-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+        }
+
+        .place-image {
+            height: 240px;
+            background: linear-gradient(45deg, #FF385C, #E91E63);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .place-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 240"><rect fill="%23FF385C" width="400" height="240"/><circle fill="%23ffffff" opacity="0.1" cx="100" cy="60" r="40"/><circle fill="%23ffffff" opacity="0.1" cx="300" cy="180" r="60"/></svg>');
+            background-size: cover;
+        }
+
+        .heart-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .heart-btn:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+
+        .place-info {
+            padding: 1.5rem;
+        }
+
+        .place-location {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .place-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #222;
+        }
+
+        .place-rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.9rem;
+        }
+
+        .place-type {
+            color: #717171;
+            margin-bottom: 0.5rem;
+        }
+
+        .place-dates {
+            color: #717171;
+            margin-bottom: 0.5rem;
+        }
+
+        .place-price {
+            font-weight: 600;
+            color: #222;
+        }
+
+        .place-amenities {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+        }
+
+        .amenity {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #717171;
+            font-size: 0.9rem;
+        }
+
+        /* Footer */
+        footer {
+            background: #f7f7f7;
+            padding: 3rem 2rem 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: #222;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a {
+            color: #717171;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-section a:hover {
+            color: #222;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #ddd;
+            color: #717171;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .search-bar {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .filter-container {
+                overflow-x: auto;
+                padding-bottom: 1rem;
+            }
+            
+            .places-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <a href="#" class="logo">
+                <i class="fab fa-airbnb"></i> AirBnB
+            </a>
+            
+            <div class="search-bar">
+                <div class="search-item">
+                    <div style="font-weight: 600;">Where</div>
+                    <div style="color: #717171; font-size: 0.9rem;">Search destinations</div>
+                </div>
+                <div class="search-item">
+                    <div style="font-weight: 600;">Check in</div>
+                    <div style="color: #717171; font-size: 0.9rem;">Add dates</div>
+                </div>
+                <div class="search-item">
+                    <div style="font-weight: 600;">Check out</div>
+                    <div style="color: #717171; font-size: 0.9rem;">Add dates</div>
+                </div>
+                <div class="search-item">
+                    <div style="font-weight: 600;">Who</div>
+                    <div style="color: #717171; font-size: 0.9rem;">Add guests</div>
+                </div>
+                <button class="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+
+            <div class="user-menu">
+                <button class="user-btn">
+                    <i class="fas fa-bars"></i>
+                    <i class="fas fa-user-circle" style="font-size: 1.5rem;"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h1>Find Your Perfect Stay</h1>
+        <p>Discover amazing places to stay around the world</p>
+    </section>
+
+    <section class="filters">
+        <div class="filter-container">
+            <button class="filter-btn active">
+                <i class="fas fa-home"></i>
+                Entire homes
+            </button>
+            <button class="filter-btn">
+                <i class="fas fa-door-open"></i>
+                Private rooms
+            </button>
+            <button class="filter-btn">
+                <i class="fas fa-bed"></i>
+                Hotel rooms
+            </button>
+            <button class="filter-btn">
+                <i class="fas fa-wifi"></i>
+                WiFi
+            </button>
+            <button class="filter-btn">
+                <i class="fas fa-parking"></i>
+                Parking
+            </button>
+            <button class="filter-btn">
+                <i class="fas fa-swimming-pool"></i>
+                Pool
+            </button>
+            <button class="filter-btn">
+                <i class="fas fa-utensils"></i>
+                Kitchen
+            </button>
+        </div>
+    </section>
+
+    <main class="places">
+        <h1>Places to stay</h1>
+        <div class="places-grid" id="placesGrid">
+            <!-- Places will be generated by JavaScript -->
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Support</h3>
+                <ul>
+                    <li><a href="#">Help Centre</a></li>
+                    <li><a href="#">AirCover</a></li>
+                    <li><a href="#">Safety information</a></li>
+                    <li><a href="#">Supporting people with disabilities</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Community</h3>
+                <ul>
+                    <li><a href="#">Airbnb.org: disaster relief housing</a></li>
+                    <li><a href="#">Combating discrimination</a></li>
+                    <li><a href="#">Diversity & Belonging</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Hosting</h3>
+                <ul>
+                    <li><a href="#">Airbnb your home</a></li>
+                    <li><a href="#">AirCover for Hosts</a></li>
+                    <li><a href="#">Hosting resources</a></li>
+                    <li><a href="#">Community forum</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>About</h3>
+                <ul>
+                    <li><a href="#">How Airbnb works</a></li>
+                    <li><a href="#">Newsroom</a></li>
+                    <li><a href="#">Investors</a></li>
+                    <li><a href="#">Careers</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Airbnb Clone, Inc. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Sample data for places
+        const places = [
+            {
+                id: 1,
+                name: "Cozy Downtown Apartment",
+                location: "San Francisco, CA",
+                type: "Entire apartment",
+                rating: 4.8,
+                reviews: 127,
+                price: 120,
+                dates: "Nov 20-25",
+                amenities: ["wifi", "kitchen", "parking"],
+                owner: "John Doe"
+            },
+            {
+                id: 2,
+                name: "Modern Studio with City View",
+                location: "New York, NY",
+                type: "Studio",
+                rating: 4.9,
+                reviews: 89,
+                price: 95,
+                dates: "Nov 22-27",
+                amenities: ["wifi", "gym", "pool"],
+                owner: "Jane Smith"
+            },
+            {
+                id: 3,
+                name: "Beachfront Villa",
+                location: "Los Angeles, CA",
+                type: "Entire house",
+                rating: 4.7,
+                reviews: 203,
+                price: 250,
+                dates: "Nov 19-24",
+                amenities: ["wifi", "pool", "parking", "kitchen"],
+                owner: "Mike Johnson"
+            },
+            {
+                id: 4,
+                name: "Historic Loft in Arts District",
+                location: "Chicago, IL",
+                type: "Entire loft",
+                rating: 4.6,
+                reviews: 156,
+                price: 85,
+                dates: "Nov 21-26",
+                amenities: ["wifi", "kitchen", "pets"],
+                owner: "Sarah Wilson"
+            },
+            {
+                id: 5,
+                name: "Luxury Penthouse Suite",
+                location: "Miami, FL",
+                type: "Entire apartment",
+                rating: 4.9,
+                reviews: 78,
+                price: 180,
+                dates: "Nov 23-28",
+                amenities: ["wifi", "pool", "gym", "parking"],
+                owner: "David Brown"
+            },
+            {
+                id: 6,
+                name: "Mountain Cabin Retreat",
+                location: "Denver, CO",
+                type: "Entire cabin",
+                rating: 4.8,
+                reviews: 94,
+                price: 140,
+                dates: "Nov 20-25",
+                amenities: ["wifi", "fireplace", "parking"],
+                owner: "Lisa Davis"
+            }
+        ];
+
+        // Function to render places
+        function renderPlaces() {
+            const placesGrid = document.getElementById('placesGrid');
+            placesGrid.innerHTML = '';
+
+            places.forEach(place => {
+                const placeCard = document.createElement('div');
+                placeCard.className = 'place-card';
+                placeCard.innerHTML = `
+                    <div class="place-image">
+                        <button class="heart-btn">
+                            <i class="far fa-heart"></i>
+                        </button>
+                    </div>
+                    <div class="place-info">
+                        <div class="place-location">
+                            <div class="place-name">${place.location}</div>
+                            <div class="place-rating">
+                                <i class="fas fa-star" style="color: #FFD700;"></i>
+                                ${place.rating} (${place.reviews})
+                            </div>
+                        </div>
+                        <div class="place-type">${place.type}</div>
+                        <div class="place-dates">${place.dates}</div>
+                        <div class="place-price">$${place.price} night</div>
+                        <div class="place-amenities">
+                            ${place.amenities.map(amenity => {
+                                const icons = {
+                                    wifi: 'fas fa-wifi',
+                                    kitchen: 'fas fa-utensils',
+                                    parking: 'fas fa-parking',
+                                    pool: 'fas fa-swimming-pool',
+                                    gym: 'fas fa-dumbbell',
+                                    pets: 'fas fa-paw',
+                                    fireplace: 'fas fa-fire'
+                                };
+                                return `<div class="amenity"><i class="${icons[amenity] || 'fas fa-check'}"></i> ${amenity}</div>`;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+                placesGrid.appendChild(placeCard);
+            });
+        }
+
+        // Add event listeners for filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        // Add heart button functionality
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.heart-btn')) {
+                const heartIcon = e.target.closest('.heart-btn').querySelector('i');
+                if (heartIcon.classList.contains('far')) {
+                    heartIcon.classList.remove('far');
+                    heartIcon.classList.add('fas');
+                    heartIcon.style.color = '#FF385C';
+                } else {
+                    heartIcon.classList.remove('fas');
+                    heartIcon.classList.add('far');
+                    heartIcon.style.color = '';
+                }
+            }
+        });
+
+        // Initialize the page
+        renderPlaces();
+    </script>
+</body>
+</html>
