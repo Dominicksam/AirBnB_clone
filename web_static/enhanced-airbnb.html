@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AirBnB Clone - Find Your Perfect Stay</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            padding-top: 80px;
+        }
+
+        /* Enhanced Navbar */
+        .navbar {
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            height: 80px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff5a5f;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .logo::before {
+            content: "🏠";
+            margin-right: 8px;
+            font-size: 28px;
+        }
+
+        /* Navigation Menu */
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .nav-item {
+            cursor: pointer;
+            padding: 10px 15px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .nav-item:hover {
+            background: #f7f7f7;
+        }
+
+        .nav-item.active {
+            background: #ff5a5f;
+            color: white;
+        }
+
+        /* Search Bar in Navbar */
+        .navbar-search {
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 40px;
+            padding: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            max-width: 450px;
+            flex: 1;
+            margin: 0 30px;
+        }
+
+        .search-section {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-right: 1px solid #ddd;
+            flex: 1;
+            transition: all 0.2s;
+        }
+
+        .search-section:last-child {
+            border-right: none;
+            flex: 0.8;
+        }
+
+        .search-section:hover {
+            background: #f7f7f7;
+            border-radius: 32px;
+        }
+
+        .search-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+            display: block;
+        }
+
+        .search-placeholder {
+            font-size: 14px;
+            color: #717171;
+            margin-top: 2px;
+        }
+
+        .search-btn {
+            background: #ff5a5f;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 4px 8px 4px 12px;
+            transition: all 0.2s;
+        }
+
+        .search-btn:hover {
+            background: #e91e63;
+            transform: scale(1.05);
+        }
+
+        /* User Menu */
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .host-btn {
+            background: transparent;
+            border: none;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            padding: 10px 15px;
+            border-radius: 25px;
+            transition: all 0.2s;
+        }
+
+        .host-btn:hover {
+            background: #f7f7f7;
+        }
+
+        .globe-btn {
+            background: transparent;
+            border: none;
+            font-size: 18px;
+            color: #333;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .globe-btn:hover {
+            background: #f7f7f7;
+        }
+
+        .profile-menu {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            padding: 8px 12px 8px 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .profile-menu:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        }
+
+        .menu-icon {
+            font-size: 16px;
+            color: #717171;
+        }
+
+        .avatar {
+            width: 30px;
+            height: 30px;
+            background: #ff5a5f;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Content Sections */
+        .content-section {
+            display: none;
+            min-height: calc(100vh - 80px);
+            padding: 40px 20px;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .section-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%23ff5a5f" width="1200" height="600"/><circle fill="%23ffffff" opacity="0.1" cx="200" cy="100" r="80"/><circle fill="%23ffffff" opacity="0.1" cx="800" cy="300" r="120"/><circle fill="%23ffffff" opacity="0.1" cx="1000" cy="500" r="60"/></svg>');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 100px 20px 80px;
+            margin-bottom: 50px;
+            border-radius: 20px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
+
+        .cta-btn {
+            background: #ff5a5f;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .cta-btn:hover {
+            background: #e91e63;
+            transform: translateY(-2px);
+        }
+
+        /* Filters */
+        .filters {
+            background: #f7f7f7;
+            padding: 30px 0;
+            border-radius: 15px;
+            margin-bottom: 40px;
+        }
+
+        .filter-container {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 30px;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .filter-btn:hover {
+            background: #f7f7f7;
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: #333;
+            color: white;
+            border-color: #333;
+        }
+
+        /* Places Grid */
+        .places-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .place-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .place-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+
+        .place-image {
+            height: 280px;
+            background: linear-gradient(45deg, #ff5a5f, #e91e63);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .place-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 280"><rect fill="%23ff5a5f" width="400" height="280"/><circle fill="%23ffffff" opacity="0.1" cx="120" cy="80" r="60"/><circle fill="%23ffffff" opacity="0.1" cx="280" cy="200" r="80"/></svg>');
+            background-size: cover;
+        }
+
+        .heart-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 16px;
+        }
+
+        .heart-btn:hover {
+            background: white;
+            transform: scale(1.1);
+        }
+
+        .place-info {
+            padding: 20px;
+        }
+
+        .place-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .place-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: #333;
+            line-height: 1.3;
+        }
+
+        .place-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        .place-details {
+            color: #717171;
+            margin-bottom: 8px;
+        }
+
+        .place-price {
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1rem;
+            margin-top: 10px;
+        }
+
+        /* Experiences Section */
+        .experiences-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .experience-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .experience-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .experience-icon {
+            font-size: 3rem;
+            color: #ff5a5f;
+            margin-bottom: 20px;
+        }
+
+        .experience-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .experience-desc {
+            color: #717171;
+            line-height: 1.6;
+        }
+
+        /* Host Section */
+        .host-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 80px 20px;
+            border-radius: 20px;
+            margin-bottom: 40px;
+        }
+
+        .host-hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+
+        .host-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .host-feature {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        /* Help Section */
+        .help-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .help-category {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .help-category:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar-search {
+                display: none;
+            }
+            
+            .nav-menu {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .places-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-container {
+                overflow-x: auto;
+                justify-content: flex-start;
+                padding: 0 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Enhanced Navbar -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <!-- Logo -->
+            <a href="#" class="logo" onclick="showSection('home')">AirBnB</a>
+            
+            <!-- Navigation Menu -->
+            <ul class="nav-menu">
+                <li class="nav-item active" onclick="showSection('home')">Home</li>
+                <li class="nav-item" onclick="showSection('experiences')">Experiences</li>
+                <li class="nav-item" onclick="showSection('host')">Become a Host</li>
+                <li class="nav-item" onclick="showSection('help')">Help</li>
+            </ul>
+            
+            <!-- Search Bar -->
+            <div class="navbar-search">
+                <div class="search-section" onclick="openSearchModal('location')">
+                    <span class="search-label">Where</span>
+                    <div class="search-placeholder">Search destinations</div>
+                </div>
+                <div class="search-section" onclick="openSearchModal('checkin')">
+                    <span class="search-label">Check in</span>
+                    <div class="search-placeholder">Add dates</div>
+                </div>
+                <div class="search-section" onclick="openSearchModal('checkout')">
+                    <span class="search-label">Check out</span>
+                    <div class="search-placeholder">Add dates</div>
+                </div>
+                <div class="search-section" onclick="openSearchModal('guests')">
+                    <span class="search-label">Who</span>
+                    <div class="search-placeholder">Add guests</div>
+                </div>
+                <button class="search-btn" onclick="performSearch()">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            
+            <!-- User Menu -->
+            <div class="user-menu">
+                <button class="host-btn" onclick="showSection('host')">Airbnb your home</button>
+                <button class="globe-btn">
+                    <i class="fas fa-globe"></i>
+                </button>
+                <div class="profile-menu" onclick="toggleUserMenu()">
+                    <i class="fas fa-bars menu-icon"></i>
+                    <div class="avatar">J</div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Home Section -->
+    <section id="home" class="content-section active">
+        <div class="section-container">
+            <!-- Hero -->
+            <div class="hero">
+                <h1>Not sure where to go? Perfect.</h1>
+                <p>Discover amazing places to stay around the world</p>
+                <button class="cta-btn" onclick="openSearchModal('flexible')">I'm flexible</button>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters">
+                <div class="filter-container">
+                    <button class="filter-btn active" onclick="filterPlaces('all')">
+                        <i class="fas fa-home"></i>
+                        All
+                    </button>
+                    <button class="filter-btn" onclick="filterPlaces('apartment')">
+                        <i class="fas fa-building"></i>
+                        Apartments
+                    </button>
+                    <button class="filter-btn" onclick="filterPlaces('house')">
+                        <i class="fas fa-home"></i>
+                        Houses
+                    </button>
+                    <button class="filter-btn" onclick="filterPlaces('villa')">
+                        <i class="fas fa-tree"></i>
+                        Villas
+                    </button>
+                    <button class="filter-btn" onclick="filterPlaces('cabin')">
+                        <i class="fas fa-mountain"></i>
+                        Cabins
+                    </button>
+                    <button class="filter-btn" onclick="filterPlaces('beach')">
+                        <i class="fas fa-umbrella-beach"></i>
+                        Beach
+                    </button>
+                </div>
+            </div>
+
+            <!-- Places Grid -->
+            <div class="places-grid" id="placesGrid">
+                <!-- Places will be generated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Experiences Section -->
+    <section id="experiences" class="content-section">
+        <div class="section-container">
+            <h1 class="section-title">Airbnb Experiences</h1>
+            <p style="text-align: center; font-size: 1.2rem; color: #717171; margin-bottom: 40px;">
+                Things to do in your destination, hosted by locals
+            </p>
+            
+            <div class="experiences-grid">
+                <div class="experience-card">
+                    <div class="experience-icon">🍷</div>
+                    <h3 class="experience-title">Wine Tasting Tours</h3>
+                    <p class="experience-desc">Explore local vineyards and taste exclusive wines with expert sommeliers</p>
+                </div>
+                <div class="experience-card">
+                    <div class="experience-icon">🎨</div>
+                    <h3 class="experience-title">Art Workshops</h3>
+                    <p class="experience-desc">Create beautiful artworks with local artists in inspiring locations</p>
+                </div>
+                <div class="experience-card">
+                    <div class="experience-icon">🏔️</div>
+                    <h3 class="experience-title">Mountain Adventures</h3>
+                    <p class="experience-desc">Hiking, climbing, and outdoor adventures with experienced guides</p>
+                </div>
+                <div class="experience-card">
+                    <div class="experience-icon">🍳</div>
+                    <h3 class="experience-title">Cooking Classes</h3>
+                    <p class="experience-desc">Learn to cook traditional dishes with local chefs and families</p>
+                </div>
+                <div class="experience-card">
+                    <div class="experience-icon">📸</div>
+                    <h3 class="experience-title">Photo Tours</h3>
+                    <p class="experience-desc">Capture stunning photos of hidden gems with professional photographers</p>
+                </div>
+                <div class="experience-card">
+                    <div class="experience-icon">🎭</div>
+                    <h3 class="experience-title">Cultural Shows</h3>
+                    <p class="experience-desc">Immerse yourself in local culture through music, dance, and storytelling</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Host Section -->
+    <section id="host" class="content-section">
+        <div class="section-container">
+            <div class="host-hero">
+                <h1>Try hosting</h1>
+                <p>Earn extra income and unlock new opportunities by sharing your space.</p>
+                <button class="cta-btn">Learn more</button>
+            </div>
+            
+            <div class="host-features">
+                <div class="host-feature">
+                    <div class="experience-icon">💰</div>
+                    <h3>Earn extra income</h3>
+                    <p>Make money sharing your space with travelers from around the world</p>
+                </div>
+                <div class="host-feature">
+                    <div class="experience-icon">🛡️</div>
+                    <h3>Host with confidence</h3>
+                    <p>Airbnb provides comprehensive protection and support for hosts</p>
+                </div>
+                <div class="host-feature">
+                    <div class="experience-icon">🌍</div>
+                    <h3>Meet amazing people</h3>
+                    <p>Connect with guests from different cultures and backgrounds</p>
+                </div>
+                <div class="host-feature">
+                    <div class="experience-icon">📱</div>
+                    <h3>Easy to manage</h3>
+                    <p>Simple tools to manage your listing, bookings, and communications</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Help Section -->
+    <section id="help" class="content-section">
+        <div class="section-container">
+            <h1 class="section-title">How can we help?</h1>
+            
+            <div class="help-categories">
+                <div class="help-category">
+                    <h3>🏠 Getting started as a guest</h3>
+                    <p>Learn how to search, book, and enjoy your stay</p>
+                </div>
+                <div class="help-category">
+                    <h3>🔑 During your stay</h3>
+                    <p>Get help with check-in, amenities, and house rules</p>
+                </div>
+                <div class="help-category">
+                    <h3>🏡 Hosting on Airbnb</h3>
+                    <p>Everything you need to know about becoming a host</p>
+                </div>
+                <div class="help-category">
+                    <h3>💳 Payments and billing</h3>
+                    <p>Understand how payments, fees, and refunds work</p>
+                </div>
+                <div class="help-category">
+                    <h3>🚨 Safety and security</h3>
+                    <p>Learn about our safety features and community standards</p>
+                </div>
+                <div class="help-category">
+                    <h3>📞 Contact us</h3>
+                    <p>Get in touch with our support team for personalized help</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Sample places data
+        const places = [
+            {
+                id: 1,
+                name: "Luxury Penthouse in Manhattan",
+                location: "New York, NY",
+                type: "apartment",
+                category: "Entire apartment",
+                rating: 4.9,
+                reviews: 156,
+                price: 299,
+                image: "apartment"
+            },
+            {
+                id: 2,
+                name: "Cozy Beach House",
+                location: "Malibu, CA",
+                type: "house",
+                category: "Entire house",
+                rating: 4.8,
+                reviews: 89,
+                price: 450,
+                image: "beach"
+            },
+            {
+                id: 3,
+                name: "Mountain Villa with Pool",
+                location: "Aspen, CO",
+                type: "villa",
+                category: "Entire villa",
+                rating: 4.9,
+                reviews: 203,
+                price: 650,
+                image: "villa"
+            },
+            {
+                id: 4,
+                name: "Historic Downtown Loft",
+                location: "San Francisco, CA",
+                type: "apartment",
+                category: "Entire loft",
+                rating: 4.7,
+                reviews: 124,
+                price: 189,
+                image: "apartment"
+            },
+            {
+                id: 5,
+                name: "Rustic Cabin Retreat",
+                location: "Lake Tahoe, CA",
+                type: "cabin",
+                category: "Entire cabin",
+                rating: 4.8,
+                reviews: 97,
+                price: 225,
+                image: "cabin"
+            },
+            {
+                id: 6,
+                name: "Beachfront Condo",
+                location: "Miami Beach, FL",
+                type: "apartment",
+                category: "Entire apartment",
+                rating: 4.6,
+                reviews: 178,
+                price: 175,
+                image: "beach"
+            }
+        ];
+
+        let currentFilter = 'all';
+
+        // Navigation functions
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show target section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Update nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            event.target.classList.add('active');
+        }
+
+        // Search modal functions
+        function openSearchModal(type) {
+            alert(`Opening ${type} search...`);
+        }
+
+        function performSearch() {
+            alert('Searching for places...');
+        }
+
+        function toggleUserMenu() {
+            alert('User menu clicked!');
+        }
+
+        // Filter places
+        function filterPlaces(type) {
+            currentFilter = type;
+            
+            // Update filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Render filtered places
+            renderPlaces();
+        }
+
+        // Render places
+        function renderPlaces() {
+            const placesGrid = document.getElementById('placesGrid');
+            const filteredPlaces = currentFilter === 'all' 
+                ? places 
+                : places.filter(place => place.type === currentFilter);
+            
+            placesGrid.innerHTML = filteredPlaces.map(place => `
+                <div class="place-card" onclick="viewPlace(${place.id})">
+                    <div class="place-image">
+                        <button class="heart-btn" onclick="event.stopPropagation(); toggleFavorite(${place.id})">
+                            <i class="far fa-heart"></i>
+                        </button>
+                    </div>
+                    <div class="place-info">
+                        <div class="place-header">
+                            <div class="place-name">${place.name}</div>
+                            <div class="place-rating">
+                                <i class="fas fa-star" style="color: #FFD700;"></i>
+                                ${place.rating} (${place.reviews})
+                            </div>
+                        </div>
+                        <div class="place-details">${place.category} • ${place.location}</div>
+                        <div class="place-price">$${place.price} night</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Place interactions
+        function viewPlace(id) {
+            alert(`Viewing place ${id}`);
+        }
+
+        function toggleFavorite(id) {
+            const heartIcon = event.target.closest('.heart-btn').querySelector('i');
+            if (heartIcon.classList.contains('far')) {
+                heartIcon.classList.remove('far');
+                heartIcon.classList.add('fas');
+                heartIcon.style.color = '#ff5a5f';
+            } else {
+                heartIcon.classList.remove('fas');
+                heartIcon.classList.add('far');
+                heartIcon.style.color = '';
+            }
+        }
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 100) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderPlaces();
+        });
+    </script>
+</body>
+</html>
